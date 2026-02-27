@@ -68,9 +68,59 @@ public class TodoFrame extends JFrame {
         add(buildTablePanel(), BorderLayout.CENTER);
         add(buildBottomPanel(), BorderLayout.SOUTH);
 
-//        wireEvents();
+        wireEvents();
 
         // Cargar datos al iniciar
+        refreshTable();
+    }
+    
+    private void wireEvents() {
+        btnAdd.addActionListener(e -> onAdd());
+        btnToggle.addActionListener(e -> onToggle());
+        btnDelete.addActionListener(e -> onDelete());
+//        btnRefresh.addActionListener(e -> refreshTable());
+//        btnLogout.addActionListener(e -> onLogout());
+
+        // Enter en el input agrega
+//        txtNewTodo.addActionListener(e -> onAdd());
+    }
+    
+    private void onDelete() {
+        Integer todoId = getSelectedTodoId();
+       
+        if (todoId == null) return;
+        
+        boolean ok = todoDb.delete(todoId);
+        
+        if (!ok) {
+            JOptionPane.showMessageDialog(this, "No se pudo actualizar la tarea");
+        }
+        refreshTable();
+    }
+    
+    private void onToggle() {
+        Integer todoId = getSelectedTodoId();
+        
+        if (todoId == null) return;
+        
+        boolean ok = todoDb.toggleDone(todoId);
+        
+        if (!ok) {
+            JOptionPane.showMessageDialog(this, "No se pudo actualizar la tarea");
+        }
+        refreshTable();
+    }
+    
+    private void onAdd() {
+        String title = txtNewTodo.getText().trim();
+        
+        if (title.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Ingresa un nombre para la tarea");
+        }
+        
+        boolean ok = todoDb.insert(this.user.getId(), title);
+        
+        txtNewTodo.setText("");
         refreshTable();
     }
     
@@ -115,16 +165,16 @@ public class TodoFrame extends JFrame {
         return bottom;
     }
     
-//    private Integer getSelectedTodoId() {
-//        int row = table.getSelectedRow();
-//        if (row == -1) {
-//            JOptionPane.showMessageDialog(this, "Selecciona una tarea primero.");
-//            return null;
-//        }
-//
-//        Object value = tableModel.getValueAt(row, 0); // columna ID
-//        return (Integer) value;
-//    }
+    private Integer getSelectedTodoId() {
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Selecciona una tarea primero.");
+            return null;
+        }
+
+        Object value = tableModel.getValueAt(row, 0); // columna ID
+        return (Integer) value;
+    }
 
     
     

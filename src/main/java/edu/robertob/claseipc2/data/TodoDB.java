@@ -44,4 +44,58 @@ public class TodoDB {
         }
         return todosList;
     }
+    
+    public boolean insert(int userId, String title) {
+        String sql = "INSERT INTO todos (user_id, title, done) VALUES (?, ?, FALSE)";
+        
+        try(Connection conn = ConexionDB.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+                ){
+            
+            stmt.setInt(1, userId);
+            stmt.setString(2, title);
+            
+            return stmt.executeUpdate() == 1;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean toggleDone(int todoId){        
+        String sql = "UPDATE todos SET done = NOT done WHERE id = ?";
+        
+        try(Connection conn = ConexionDB.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+                ){
+               
+            stmt.setInt(1, todoId);
+            
+            return stmt.executeUpdate() == 1;
+        
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean delete(int todoId){        
+        String sql = "DELETE FROM todos WHERE id = ?";
+        
+        try(Connection conn = ConexionDB.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+                ){
+               
+            stmt.setInt(1, todoId);
+            
+            return stmt.executeUpdate() == 1;
+        
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
+
+
